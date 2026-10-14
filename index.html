@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bảng tuần hoàn &amp; Tính phi kim – Hóa học 10 – Nhóm 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f2742; --ink2:#46596e; --paper:#f2f7f8; --card:#ffffff; --line:#d3dfe4;
+  --metal:#8fd3cb; --metal-d:#1f6f69;
+  --non:#f6b5c4; --non-d:#a81f4b;
+  --noble:#f7c600;
+  --accent:#a81f4b;
+  --radius:10px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;font-size:16px}
+h1,h2,h3,h4{line-height:1.25;margin:0 0 .5em;letter-spacing:-.01em}
+h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800}
+h2{font-size:clamp(1.3rem,2.6vw,1.75rem);font-weight:700}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0 0 .8em;max-width:75ch}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #1b6ef3;outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{background:var(--ink);color:#fff;position:sticky;top:0;z-index:20}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap}
+.brand .tile{width:30px;height:30px;border-radius:5px;background:var(--non);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:14px}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+.nav button{background:none;border:0;color:#c9d6e3;padding:9px 14px;border-radius:8px;font-weight:600;white-space:nowrap}
+.nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav button[aria-current="page"]{background:#fff;color:var(--ink)}
+.chip{display:flex;align-items:center;gap:8px;font-size:.85rem;background:rgba(255,255,255,.12);padding:5px 6px 5px 12px;border-radius:99px}
+.chip button{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:99px;padding:3px 10px;font-size:.8rem}
+
+.view{display:none;padding:28px 0 56px}
+.view.on{display:block}
+
+/* home */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:start}
+@media(max-width:860px){.hero{grid-template-columns:1fr}}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:18px 0;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);font-size:.95rem}
+.meta dt{color:var(--ink2)} .meta dd{margin:0;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.field label{font-weight:600;font-size:.9rem}
+.field input,.field select{font:inherit;padding:10px 12px;border:1.5px solid #a9bcc6;border-radius:8px;background:#fff;color:var(--ink)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;border:0;border-radius:8px;padding:11px 18px;font-weight:700}
+.btn:hover{background:#18395f}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.alt:hover{background:#eaf1f4}
+.btn.pink{background:var(--accent)}
+.btn.pink:hover{background:#8a1840}
+.err{color:#b00020;font-size:.88rem;min-height:1.3em;margin:0 0 8px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start}
+.steps li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:.85rem;font-weight:700;margin-top:2px}
+
+/* periodic table */
+.pt-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.seg button{background:#fff;color:var(--ink);border:0;padding:8px 14px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:.85rem;margin-bottom:10px}
+.sw{display:inline-flex;align-items:center;gap:6px}
+.sw i{width:18px;height:18px;border-radius:4px;display:inline-block;border:1.5px solid transparent}
+.sw i.m{background:var(--metal)} .sw i.n{background:var(--non)} .sw i.g{background:var(--noble)}
+.sw i.l{background:#fff;border:1.5px dashed var(--ink)}
+.grad{width:220px;height:14px;border-radius:7px;background:linear-gradient(90deg,#fdecf1,#a3153f);border:1px solid var(--line)}
+.pt-scroll{overflow-x:auto;padding-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.pt-outer{display:flex;gap:8px;min-width:1120px}
+.pt-main{flex:1;min-width:0}
+.pt{display:grid;grid-template-columns:24px repeat(18,minmax(54px,1fr));grid-template-rows:auto repeat(7,auto) 12px auto auto;gap:3px}
+.gl,.pl{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--ink2);border-radius:4px}
+.gl.on,.pl.on{background:var(--ink);color:#fff}
+.cell{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 2px 3px;min-height:64px;border:1.5px solid transparent;border-radius:5px;color:var(--ink);background:var(--metal);transition:transform .12s}
+.cell.nonmetal{background:var(--non)} .cell.noble{background:var(--noble)}
+.cell.mloid{border:1.5px dashed var(--ink)}
+.cell .z{position:absolute;top:2px;left:4px;font-size:10px;font-weight:600}
+.cell .sy{font-size:20px;font-weight:800;line-height:1.05}
+.cell .nmx{font-size:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell .ms{font-size:8.5px;opacity:.8}
+.cell:hover{transform:scale(1.08);z-index:3;border-color:var(--ink)}
+.cell.sel{outline:3px solid var(--ink);z-index:4}
+.cell.nodata{background:repeating-linear-gradient(45deg,#e8eef0,#e8eef0 4px,#dbe4e7 4px,#dbe4e7 8px)}
+.cell.dark{color:#fff}
+.ph{display:grid;place-items:center;text-align:center;font-size:9px;font-weight:700;color:var(--ink2);border:1.5px dashed #9fb3bd;border-radius:5px;line-height:1.2}
+.fl{display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:12px;font-weight:700;color:var(--ink2);text-align:right}
+.ha{display:flex;align-items:center;gap:10px;margin:0 0 8px 27px;font-size:.85rem;font-weight:600;color:var(--accent)}
+.ha .line{flex:1;height:2px;background:var(--accent);position:relative}
+.ha .line::after{content:"";position:absolute;right:-1px;top:-5px;border:6px solid transparent;border-left:10px solid var(--accent);border-right:0}
+.va{display:flex;flex-direction:column;align-items:center;gap:8px;width:30px;padding-top:34px;font-size:.85rem;font-weight:600;color:var(--accent)}
+.va .line{flex:1;width:2px;background:var(--accent);position:relative;min-height:150px}
+.va .line::before{content:"";position:absolute;top:-1px;left:-5px;border:6px solid transparent;border-bottom:10px solid var(--accent);border-top:0}
+.va span{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.note{font-size:.85rem;color:var(--ink2)}
+
+/* dialog */
+dialog{border:0;border-radius:14px;padding:0;max-width:min(940px,96vw);width:100%;color:var(--ink);box-shadow:0 20px 60px rgba(15,39,66,.35)}
+dialog::backdrop{background:rgba(15,39,66,.55)}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);gap:8px}
+.dbody{display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:20px;padding:18px 20px 22px}
+@media(max-width:760px){.dbody{grid-template-columns:1fr}}
+.iconbtn{background:#fff;border:1.5px solid var(--ink);border-radius:8px;padding:6px 12px;font-weight:700;color:var(--ink)}
+.iconbtn:hover{background:#eaf1f4}
+.bigtile{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.bigtile .t{width:84px;height:84px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--metal)}
+.bigtile .t.nonmetal{background:var(--non)} .bigtile .t.noble{background:var(--noble)}
+.bigtile .t b{font-size:2.2rem;line-height:1} .bigtile .t small{position:absolute;top:5px;left:8px;font-weight:700}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--metal);margin-right:6px}
+.tag.nonmetal{background:var(--non)} .tag.noble{background:var(--noble)} .tag.ml{background:#fff;border:1.5px dashed var(--ink)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.93rem;margin:0}
+.kv dt{color:var(--ink2)} .kv dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.model{background:#f7fbfc;border:1px solid var(--line);border-radius:12px;padding:6px}
+.model svg{width:100%;height:auto;display:block}
+.shells{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;font-size:.8rem}
+.shells span{background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 8px}
+.ionrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.ioneq{font-weight:700}
+.insight{margin-top:12px;padding:10px 12px;border-left:4px solid var(--accent);background:#fdf3f6;border-radius:0 8px 8px 0;font-size:.93rem}
+
+/* nonmetal content */
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 22px;border-bottom:2px solid var(--line)}
+.subtabs button{background:none;border:0;padding:10px 16px;font-weight:700;color:var(--ink2);border-bottom:4px solid transparent;margin-bottom:-2px}
+.subtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.sub{display:none}.sub.on{display:block}
+.define{font-size:1.15rem;padding:16px 20px;background:var(--non);border-radius:var(--radius);margin-bottom:16px;max-width:none}
+.define b{font-weight:800}
+.cols3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:12px 0 20px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:12px 0 20px}
+.eq{font-size:1.25rem;font-weight:700;padding:8px 12px;background:#f2f7f8;border-radius:8px;margin:8px 0;display:inline-block}
+.warn{padding:12px 16px;background:#fff8e1;border:1px solid #f1d27a;border-radius:var(--radius);margin:14px 0;max-width:80ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.chips button{background:var(--non);border:1.5px solid var(--ink);border-radius:8px;padding:4px 12px;font-weight:800;color:var(--ink)}
+.chips button.m{background:#fff;border-style:dashed}
+table.data{border-collapse:collapse;width:100%;font-size:.93rem;background:#fff;border:1px solid var(--line)}
+table.data th{background:var(--ink);color:#fff;text-align:left;padding:9px 12px}
+table.data td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+table.data tr:nth-child(even) td{background:#f5f9fa}
+.tscroll{overflow-x:auto;margin:10px 0 14px}
+.chartbox{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.chartbox select{font:inherit;padding:7px 10px;border:1.5px solid #a9bcc6;border-radius:8px;background:#fff}
+.chartbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.rulecard{border-left:6px solid var(--accent);background:#fff;padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rulecard h3{margin-bottom:.3em}
+.ex{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:14px}
+.ex ol{margin:.4em 0 0;padding-left:1.2em}
+
+/* quiz */
+.qwrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;max-width:860px}
+.prog{height:8px;background:#e3ecef;border-radius:99px;overflow:hidden;margin:6px 0 16px}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.lvl{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:99px;background:#e3ecef;margin-left:8px}
+.lvl.tb{background:#ffe6a8}.lvl.kh{background:var(--non)}
+.qtext{font-size:1.15rem;font-weight:600;margin:10px 0 14px;max-width:none}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;background:#fff;border:2px solid #b9cad2;border-radius:10px;padding:12px 14px;color:var(--ink);width:100%}
+.opt:hover:not(:disabled){border-color:var(--ink);background:#f3f8fa}
+.opt .k{flex:none;width:28px;height:28px;border-radius:50%;background:#e3ecef;display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.opt.right{border-color:#1b8a4b;background:#e9f7ef}.opt.right .k{background:#1b8a4b;color:#fff}
+.opt.wrong{border-color:#c62828;background:#fdeaea}.opt.wrong .k{background:#c62828;color:#fff}
+.opt:disabled{cursor:default}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:.97rem}
+.fb.ok{background:#e9f7ef;border:1px solid #1b8a4b}.fb.no{background:#fdeaea;border:1px solid #c62828}
+.score{font-size:3rem;font-weight:800;line-height:1}
+.review{margin-top:16px;display:grid;gap:8px}
+.review details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:#fafcfd}
+.review summary{cursor:pointer;font-weight:600}
+.cert{margin:18px 0}
+.cert canvas{width:100%;max-width:900px;height:auto;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(15,39,66,.15)}
+.sendstat{font-size:.9rem;padding:8px 12px;border-radius:8px;background:#eef4f7;margin:10px 0;display:inline-block}
+
+footer{background:var(--ink);color:#c9d6e3;padding:26px 0;font-size:.88rem}
+footer a{color:#fff}
+footer .wrap{display:grid;gap:6px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{
+  @page{size:A4 landscape;margin:0}
+  body *{visibility:hidden}
+  #certCanvas,#certCanvas *{visibility:visible}
+  #certCanvas{position:fixed;left:0;top:0;width:100vw!important;max-width:none!important;border:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="tile">F</span><span>Hóa học 10 · Nhóm <span id="hdrGroup">2</span></span></div>
+    <nav class="nav" aria-label="Điều hướng chính">
+      <button data-view="home" aria-current="page">Trang chủ &amp; đăng nhập</button>
+      <button data-view="table">Nhiệm vụ 1: Bảng tuần hoàn</button>
+      <button data-view="nonmetal">Nhiệm vụ 2: Tính phi kim</button>
+    </nav>
+    <div class="chip" id="userChip" hidden><span id="userChipText"></span><button id="logoutBtn" type="button">Đăng xuất</button></div>
+  </div>
+</header>
+
+<main>
+<!-- HOME -->
+<section class="view on" id="view-home">
+  <div class="wrap hero">
+    <div>
+      <h1>Bảng tuần hoàn các nguyên tố hóa học</h1>
+      <p style="font-size:1.15rem">Tìm hiểu vị trí các nguyên tố và quy luật biến đổi <b>tính phi kim</b> trong bảng tuần hoàn. Làm bài vận dụng để nhận giấy chứng nhận.</p>
+      <dl class="meta">
+        <dt>Môn học</dt><dd>Hóa học 10 · Năm học 2026–2027</dd>
+        <dt>Lớp</dt><dd id="mLop"></dd>
+        <dt>Nhóm</dt><dd id="mNhom"></dd>
+        <dt>Nội dung</dt><dd id="mNd"></dd>
+        <dt>Thành viên</dt><dd id="mTv"></dd>
+      </dl>
+      <h2 style="margin-top:24px">Cách dùng</h2>
+      <ol class="steps">
+        <li><span>Đăng nhập bằng họ tên, lớp và số thứ tự.</span></li>
+        <li><span>Mở <b>Nhiệm vụ 1</b>, bấm vào một nguyên tố để xem vị trí và mô hình nguyên tử.</span></li>
+        <li><span>Mở <b>Nhiệm vụ 2</b> để học: Là gì? · Biến đổi thế nào? · Giải thích.</span></li>
+        <li><span>Làm bài tập vận dụng, xem đúng/sai ngay sau mỗi câu và nhận giấy chứng nhận.</span></li>
+      </ol>
+    </div>
+    <div class="card" id="loginCard"></div>
+  </div>
+</section>
+
+<!-- TABLE -->
+<section class="view" id="view-table">
+  <div class="wrap">
+    <h1>Nhiệm vụ 1: Bảng tuần hoàn</h1>
+    <p>Đủ 118 nguyên tố, 7 chu kì, 18 cột. Họ lanthanide và actinide được tách thành hai hàng riêng bên dưới. <b>Bấm vào một nguyên tố</b> để xem số thứ tự ô, chu kì, nhóm (A hay B), cấu hình electron và mô hình nguyên tử.</p>
+    <div id="tableHost1"></div>
+    <p class="note" style="margin-top:10px">Màu phân loại theo bảng tuần hoàn SGK Hóa học 10: kim loại, phi kim, khí hiếm. Á kim (B, Si, Ge, As, Sb, Te) có viền nét đứt. Khối lượng nguyên tử làm tròn như SGK.</p>
+  </div>
+</section>
+
+<!-- NONMETAL -->
+<section class="view" id="view-nonmetal">
+  <div class="wrap">
+    <h1>Nhiệm vụ 2: Tính phi kim</h1>
+    <div class="subtabs" role="tablist" aria-label="Nội dung tính phi kim">
+      <button role="tab" data-sub="what" aria-selected="true">Là gì?</button>
+      <button role="tab" data-sub="trend" aria-selected="false">Biến đổi thế nào?</button>
+      <button role="tab" data-sub="why" aria-selected="false">Giải thích</button>
+      <button role="tab" data-sub="practice" aria-selected="false">Ví dụ, bài tập</button>
+    </div>
+
+    <!-- WHAT -->
+    <div class="sub on" id="sub-what">
+      <h2>Tính phi kim là gì?</h2>
+      <p class="define"><b>Tính phi kim</b> là tính chất hóa học đặc trưng của nguyên tố, thể hiện xu hướng nguyên tử <b>nhận electron</b> khi tham gia phản ứng hóa học. Trong liên kết hóa học, nguyên tử phi kim cũng thường có xu hướng hút electron về phía mình.</p>
+      <p>Nguyên tử có xu hướng nhận electron càng mạnh thì thường có tính phi kim càng mạnh. Các nguyên tố phi kim thường nằm ở phía trên bên phải của bảng tuần hoàn, không kể hydrogen và các khí hiếm.</p>
+      <p>Nhiều nguyên tố phi kim nhóm A có từ bốn đến bảy electron lớp ngoài cùng nên có xu hướng nhận thêm electron để đạt cấu hình electron bền vững của khí hiếm.</p>
+
+      <div class="ex">
+        <h3>Ví dụ: chlorine</h3>
+        <p>Cấu hình electron: <b>1s²2s²2p⁶3s²3p⁵</b>. Khi tham gia phản ứng, chlorine dễ nhận thêm một electron để tạo thành ion Cl⁻:</p>
+        <div class="eq">Cl + e⁻ → Cl⁻</div>
+        <p>Khả năng nhận electron này là nguyên nhân khiến chlorine có tính phi kim mạnh và dễ phản ứng với nhiều kim loại để tạo thành các muối chloride.</p>
+        <button class="btn pink" type="button" data-open="17" data-ion="1">Xem mô hình Cl nhận electron</button>
+      </div>
+
+      <div class="warn"><b>Lưu ý:</b> Tính phi kim không đồng nghĩa với khả năng dẫn điện kém hay trạng thái tồn tại của nguyên tố. Bản chất của tính phi kim là khả năng nhận electron của nguyên tử, chứ không phải các tính chất vật lí như độ cứng, màu sắc hay trạng thái rắn, lỏng, khí.</div>
+
+      <h2 style="margin-top:28px">Biểu hiện của tính phi kim</h2>
+      <p>Tính phi kim thể hiện chủ yếu qua khả năng nhận electron. Trong các phản ứng oxi hóa – khử, phi kim thường đóng vai trò <b>chất oxi hóa</b> vì có xu hướng nhận electron từ chất khác.</p>
+      <div class="cols3">
+        <div class="ex"><h3>Phản ứng với kim loại</h3><p>Phi kim dễ nhận electron từ kim loại để tạo thành hợp chất ion.</p><div class="eq">2Na + Cl₂ → 2NaCl</div><p>Sodium nhường electron còn chlorine nhận electron tạo ion Cl⁻.</p></div>
+        <div class="ex"><h3>Phản ứng với hydrogen</h3><p>Nhiều phi kim phản ứng với hydrogen tạo thành hợp chất cộng hóa trị.</p><div class="eq">H₂ + Cl₂ → 2HCl</div></div>
+        <div class="ex"><h3>Phản ứng với phi kim khác</h3><p>Một số phi kim phản ứng với nhau tạo hợp chất cộng hóa trị.</p><div class="eq">S + O₂ → SO₂</div><p>Các nguyên tử phi kim cũng có thể dùng chung electron để hình thành liên kết cộng hóa trị.</p></div>
+      </div>
+
+      <h2 style="margin-top:28px">Vị trí của nguyên tố phi kim trong bảng tuần hoàn</h2>
+      <p>Phi kim tập trung ở phía bên phải và phía trên của bảng tuần hoàn (không kể nhóm khí hiếm). Các nguyên tử ở khu vực này có bán kính nhỏ, lực hút hạt nhân lớn và dễ nhận thêm electron khi tham gia phản ứng hóa học.</p>
+      <p>Giữa hai vùng kim loại và phi kim là các nguyên tố <b>á kim</b>. Á kim có tính chất trung gian giữa kim loại và phi kim, nên trong những điều kiện khác nhau có thể biểu hiện đặc điểm của cả hai nhóm nguyên tố. Bấm vào nguyên tố để xem vị trí:</p>
+      <div class="chips" aria-label="Á kim">
+        <button class="m" data-open="5">B</button><button class="m" data-open="14">Si</button><button class="m" data-open="32">Ge</button><button class="m" data-open="33">As</button><button class="m" data-open="51">Sb</button><button class="m" data-open="52">Te</button>
+      </div>
+
+      <h2 style="margin-top:28px">So sánh tính kim loại và tính phi kim</h2>
+      <div class="tscroll"><table class="data">
+        <thead><tr><th>Tiêu chí</th><th>Tính kim loại</th><th>Tính phi kim</th></tr></thead>
+        <tbody>
+          <tr><td>Khái niệm</td><td>Khả năng nhường electron để tạo ion dương</td><td>Khả năng nhận electron để tạo ion âm</td></tr>
+          <tr><td>Quá trình trao đổi electron</td><td>Nhường electron</td><td>Nhận electron</td></tr>
+          <tr><td>Ion tạo thành</td><td>Cation</td><td>Anion</td></tr>
+          <tr><td>Vai trò trong phản ứng</td><td>Chất khử</td><td>Chất oxi hóa</td></tr>
+          <tr><td>Vị trí trong bảng tuần hoàn</td><td>Chủ yếu ở bên trái và phía dưới</td><td>Chủ yếu ở bên phải và phía trên</td></tr>
+          <tr><td>Xu hướng theo chu kì</td><td>Giảm dần từ trái sang phải</td><td>Tăng dần từ trái sang phải</td></tr>
+          <tr><td>Xu hướng theo nhóm A</td><td>Tăng dần từ trên xuống dưới</td><td>Giảm dần từ trên xuống dưới</td></tr>
+          <tr><td>Nguyên tố tiêu biểu mạnh nhất</td><td>Francium (Fr)</td><td>Fluorine (F)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Tính kim loại và tính phi kim biến đổi ngược chiều nhau trong bảng tuần hoàn. Đây là cơ sở để dự đoán tính chất của các nguyên tố và thực hiện các phép so sánh trong học tập.</p>
+    </div>
+
+    <!-- TREND -->
+    <div class="sub" id="sub-trend">
+      <h2>Tính phi kim biến đổi thế nào?</h2>
+      <div class="cols2">
+        <div class="rulecard"><h3>Trong một chu kì</h3><p>Đi từ trái sang phải, tính phi kim <b>tăng dần</b>. Độ âm điện cũng tăng dần.</p></div>
+        <div class="rulecard"><h3>Trong một nhóm A</h3><p>Đi từ trên xuống dưới, tính phi kim <b>giảm dần</b>. Độ âm điện cũng giảm dần.</p></div>
+      </div>
+
+      <h3 style="margin-top:20px">Minh họa trên bảng tuần hoàn</h3>
+      <p>Màu càng đậm thì độ âm điện càng lớn, tính phi kim thường càng mạnh. Hai mũi tên chỉ chiều tăng của tính phi kim (áp dụng cho các nguyên tố nhóm A). Bấm vào ô để xem chi tiết.</p>
+      <div id="tableHost2"></div>
+
+      <h3 style="margin-top:28px">Số liệu so sánh</h3>
+      <div class="chartbox">
+        <div class="chartbar">
+          <label>Dãy nguyên tố <select id="chSet"><option value="ck2">Chu kì 2: Li → F</option><option value="ck3">Chu kì 3: Na → Cl</option><option value="vii">Nhóm VIIA: F → At</option></select></label>
+          <label>Đại lượng <select id="chMetric"><option value="en">Độ âm điện</option><option value="r">Bán kính nguyên tử</option></select></label>
+        </div>
+        <div id="chart"></div>
+        <div class="tscroll"><table class="data" id="chTable"></table></div>
+        <p class="note" id="chNote"></p>
+      </div>
+
+      <h2 style="margin-top:32px">Độ âm điện và tính phi kim</h2>
+      <p>Độ âm điện là đại lượng biểu thị khả năng hút electron của một nguyên tử khi tham gia liên kết hóa học. Nguyên tố có độ âm điện càng lớn thì càng dễ hút electron về phía mình, do đó tính phi kim thường càng mạnh.</p>
+      <p>Trong bảng tuần hoàn, độ âm điện tăng dần từ trái sang phải trong một chu kì và giảm dần từ trên xuống dưới trong một nhóm. Quy luật này tương ứng với xu hướng biến đổi của tính phi kim, cho thấy hai đại lượng có mối quan hệ chặt chẽ với nhau.</p>
+      <div class="warn">Tuy nhiên, độ âm điện và tính phi kim không hoàn toàn giống nhau. Độ âm điện chỉ mô tả khả năng hút electron trong liên kết hóa học, còn tính phi kim phản ánh xu hướng nhận electron của nguyên tử trong các phản ứng hóa học. Mặc dù khác về khái niệm, hai đại lượng thường biến đổi cùng chiều nên độ âm điện được sử dụng như một chỉ số quan trọng để đánh giá mức độ mạnh yếu của tính phi kim.</div>
+
+      <h2 style="margin-top:32px">Nguyên tố có tính phi kim mạnh nhất</h2>
+      <p>Theo quy luật biến đổi tuần hoàn, <b>fluorine (F, Z = 9)</b> là nguyên tố có tính phi kim mạnh nhất. Fluorine nằm ở góc trên bên phải của bảng tuần hoàn (không tính các khí hiếm), có bán kính nguyên tử rất nhỏ và độ âm điện lớn nhất trong tất cả các nguyên tố. Vì vậy, nguyên tử fluorine có khả năng hút electron rất mạnh.</p>
+      <p>Nhờ khả năng nhận electron rất mạnh, fluorine là chất oxi hóa mạnh nhất trong số các phi kim và phản ứng với hầu hết các nguyên tố.</p>
+      <p>Sau fluorine, các nguyên tố như oxygen (O) và chlorine (Cl) cũng có tính phi kim mạnh do có độ âm điện lớn và xu hướng nhận electron cao. Tuy nhiên, khả năng hút electron của chúng vẫn thấp hơn fluorine.</p>
+      <div class="chips"><button data-open="9" data-ion="1">F</button><button data-open="8" data-ion="1">O</button><button data-open="17" data-ion="1">Cl</button></div>
+    </div>
+
+    <!-- WHY -->
+    <div class="sub" id="sub-why">
+      <h2>Vì sao nguyên tử có tính phi kim?</h2>
+      <p>Khả năng nhận electron của nguyên tử phụ thuộc vào cấu tạo nguyên tử và lực hút của hạt nhân đối với electron lớp ngoài cùng. Một nguyên tố có tính phi kim mạnh khi nguyên tử dễ hút thêm electron từ nguyên tử khác để đạt cấu hình electron bền vững.</p>
+      <div class="cols2">
+        <div class="rulecard"><h3>Thứ nhất: bán kính nguyên tử</h3><p>Bán kính nguyên tử càng nhỏ thì electron lớp ngoài cùng càng nằm gần hạt nhân, làm cho lực hút giữa hạt nhân và electron mạnh hơn. Khi đó, nguyên tử có khả năng hút thêm electron từ bên ngoài dễ dàng hơn.</p></div>
+        <div class="rulecard"><h3>Thứ hai: điện tích hạt nhân hiệu dụng</h3><p>Điện tích hạt nhân hiệu dụng càng lớn thì lực hút tác dụng lên electron càng mạnh.</p></div>
+      </div>
+      <h3 style="margin-top:20px">Áp dụng giải thích quy luật</h3>
+      <div class="cols2">
+        <div class="ex"><h3>Trong một chu kì (trái → phải)</h3><p>Số proton tăng dần trong khi số lớp electron không đổi, khiến điện tích hạt nhân hiệu dụng tăng. Bán kính nguyên tử giảm, lực hút lên electron lớp ngoài tăng. Đây là nguyên nhân quan trọng làm <b>tính phi kim tăng dần</b> từ trái sang phải trong một chu kì.</p></div>
+        <div class="ex"><h3>Trong một nhóm A (trên → dưới)</h3><p>Số lớp electron tăng nên bán kính nguyên tử tăng, electron lớp ngoài cùng ở xa hạt nhân hơn và bị hút yếu hơn. Vì vậy nguyên tử khó nhận thêm electron, <b>tính phi kim giảm dần</b>.</p></div>
+      </div>
+      <h3 style="margin-top:20px">Tự kiểm chứng bằng mô hình</h3>
+      <p>So sánh số lớp electron của F (2 lớp) và Cl (3 lớp), rồi xem từng nguyên tử nhận electron:</p>
+      <div class="chips"><button data-open="9" data-ion="1">F</button><button data-open="17" data-ion="1">Cl</button><button data-open="35" data-ion="1">Br</button><button data-open="53" data-ion="1">I</button></div>
+    </div>
+
+    <!-- PRACTICE -->
+    <div class="sub" id="sub-practice">
+      <h2>Ví dụ minh họa</h2>
+      <div class="cols2">
+        <div class="ex"><h3>Ví dụ 1. So sánh tính phi kim của S và Cl</h3>
+          <ol><li>S (Z = 16) và Cl (Z = 17) cùng ở chu kì 3 (3 lớp electron).</li>
+          <li>Trong một chu kì, từ trái sang phải điện tích hạt nhân hiệu dụng tăng, bán kính giảm.</li>
+          <li>Cl đứng sau S nên Cl hút electron mạnh hơn.</li></ol>
+          <p><b>Kết luận:</b> tính phi kim của Cl mạnh hơn S (độ âm điện 3,16 &gt; 2,58, thang Pauling).</p></div>
+        <div class="ex"><h3>Ví dụ 2. Xác định vị trí từ cấu hình electron 1s²2s²2p³</h3>
+          <ol><li>Tổng electron = 7, vậy Z = 7 (nitrogen), ô số 7.</li>
+          <li>Có 2 lớp electron, vậy chu kì 2.</li>
+          <li>Electron cuối điền vào phân lớp p, lớp ngoài cùng có 5 electron, vậy nhóm VA.</li></ol>
+          <p><b>Kết luận:</b> N là phi kim, có xu hướng nhận 3 electron tạo ion N³⁻.</p>
+          <button class="btn alt" type="button" data-open="7" data-ion="1">Xem mô hình N</button></div>
+      </div>
+      <h2 style="margin-top:28px">Bài tập vận dụng</h2>
+      <p>14 câu từ dễ đến khó. Web báo đúng/sai và giải thích ngắn sau mỗi câu. Hoàn thành để nhận giấy chứng nhận.</p>
+      <div id="quizHost"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>Lớp <span id="fLop"></span> · Nhóm <span id="fNhom"></span> · Tính phi kim</b> — Thành viên: <span id="fTv"></span></div>
+    <div>Nguồn: SGK Hóa học 10 (chương trình GDPT 2018) cho nội dung và bảng tuần hoàn. Độ âm điện theo thang Pauling (WebElements/Wikipedia); độ âm điện của các nguyên tố phóng xạ nặng là giá trị ước lượng hoặc chưa xác định. Bán kính cộng hóa trị: Cordero và cs., <i>Dalton Trans.</i> 2008, 2832–2838.</div>
+    <div>GV bộ môn: Phạm Quốc Thắng</div>
+  </div>
+</footer>
+
+<!-- Element dialog -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dhead">
+    <div style="display:flex;gap:6px"><button class="iconbtn" id="prevEl" aria-label="Nguyên tố trước">‹ Trước</button><button class="iconbtn" id="nextEl" aria-label="Nguyên tố sau">Sau ›</button></div>
+    <strong id="dlgTitle">Nguyên tố</strong>
+    <button class="iconbtn" id="closeDlg" aria-label="Đóng">Đóng ✕</button>
+  </div>
+  <div class="dbody" id="dlgBody"></div>
+</dialog>
+
+<script>
+/* ================= CẤU HÌNH — NHÓM SỬA PHẦN NÀY ================= */
+const TEAM = {
+  lop: "10A…",                         // ví dụ: "10A3"
+  nhom: 2,
+  noiDung: "Tính phi kim",
+  thanhVien: ["Họ tên thành viên 1", "Họ tên thành viên 2", "Họ tên thành viên 3"]
+};
+// Dán link Web app của Google Apps Script (kết thúc bằng /exec) để gửi kết quả về Google Sheet.
+const SHEET_URL = "";
+/* ================================================================= */
+
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SUPM={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','-':'⁻'};
+const sup=s=>String(s).replace(/[0-9+\-]/g,c=>SUPM[c]);
+const vn=n=>String(n).replace('.',',');
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+/* ---------- DỮ LIỆU 118 NGUYÊN TỐ: ký hiệu, tên, khối lượng (làm tròn theo SGK), độ âm điện Pauling ---------- */
+const RAW=`H Hydrogen 1 2.20
+He Helium 4 -
+Li Lithium 7 0.98
+Be Beryllium 9 1.57
+B Boron 11 2.04
+C Carbon 12 2.55
+N Nitrogen 14 3.04
+O Oxygen 16 3.44
+F Fluorine 19 3.98
+Ne Neon 20 -
+Na Sodium 23 0.93
+Mg Magnesium 24 1.31
+Al Aluminium 27 1.61
+Si Silicon 28 1.90
+P Phosphorus 31 2.19
+S Sulfur 32 2.58
+Cl Chlorine 35.5 3.16
+Ar Argon 40 -
+K Potassium 39 0.82
+Ca Calcium 40 1.00
+Sc Scandium 45 1.36
+Ti Titanium 48 1.54
+V Vanadium 51 1.63
+Cr Chromium 52 1.66
+Mn Manganese 55 1.55
+Fe Iron 56 1.83
+Co Cobalt 59 1.88
+Ni Nickel 59 1.91
+Cu Copper 64 1.90
+Zn Zinc 65 1.65
+Ga Gallium 70 1.81
+Ge Germanium 73 2.01
+As Arsenic 75 2.18
+Se Selenium 79 2.55
+Br Bromine 80 2.96
+Kr Krypton 84 3.00
+Rb Rubidium 85 0.82
+Sr Strontium 88 0.95
+Y Yttrium 89 1.22
+Zr Zirconium 91 1.33
+Nb Niobium 93 1.6
+Mo Molybdenum 96 2.16
+Tc Technetium 98 1.9
+Ru Ruthenium 101 2.2
+Rh Rhodium 103 2.28
+Pd Palladium 106 2.20
+Ag Silver 108 1.93
+Cd Cadmium 112 1.69
+In Indium 115 1.78
+Sn Tin 119 1.96
+Sb Antimony 122 2.05
+Te Tellurium 128 2.1
+I Iodine 127 2.66
+Xe Xenon 131 2.6
+Cs Caesium 133 0.79
+Ba Barium 137 0.89
+La Lanthanum 139 1.10
+Ce Cerium 140 1.12
+Pr Praseodymium 141 1.13
+Nd Neodymium 144 1.14
+Pm Promethium 145 1.13
+Sm Samarium 150 1.17
+Eu Europium 152 1.2
+Gd Gadolinium 157 1.2
+Tb Terbium 159 1.1
+Dy Dysprosium 163 1.22
+Ho Holmium 165 1.23
+Er Erbium 167 1.24
+Tm Thulium 169 1.25
+Yb Ytterbium 173 1.1
+Lu Lutetium 175 1.27
+Hf Hafnium 178 1.3
+Ta Tantalum 181 1.5
+W Tungsten 184 2.36
+Re Rhenium 186 1.9
+Os Osmium 190 2.2
+Ir Iridium 192 2.20
+Pt Platinum 195 2.28
+Au Gold 197 2.54
+Hg Mercury 201 2.00
+Tl Thallium 204 1.62
+Pb Lead 207 2.33
+Bi Bismuth 209 2.02
+Po Polonium 209 2.0
+At Astatine 210 2.2
+Rn Radon 222 2.2
+Fr Francium 223 0.7
+Ra Radium 226 0.9
+Ac Actinium 227 1.1
+Th Thorium 232 1.3
+Pa Protactinium 231 1.5
+U Uranium 238 1.38
+Np Neptunium 237 1.36
+Pu Plutonium 244 1.28
+Am Americium 243 1.13
+Cm Curium 247 1.28
+Bk Berkelium 247 1.3
+Cf Californium 251 1.3
+Es Einsteinium 252 1.3
+Fm Fermium 257 1.3
+Md Mendelevium 258 1.3
+No Nobelium 259 1.3
+Lr Lawrencium 262 1.3
+Rf Rutherfordium 267 -
+Db Dubnium 268 -
+Sg Seaborgium 269 -
+Bh Bohrium 270 -
+Hs Hassium 277 -
+Mt Meitnerium 278 -
+Ds Darmstadtium 281 -
+Rg Roentgenium 282 -
+Cn Copernicium 285 -
+Nh Nihonium 286 -
+Fl Flerovium 289 -
+Mc Moscovium 290 -
+Lv Livermorium 293 -
+Ts Tennessine 294 -
+Og Oganesson 294 -`;
+const NOBLE=[2,10,18,36,54,86,118];
+const NONMETAL=[1,5,6,7,8,9,14,15,16,17,33,34,35,52,53,85];
+const METALLOID=[5,14,32,33,51,52];
+const EL=RAW.split('\n').map((ln,i)=>{const [sy,nm,ms,en]=ln.split(' ');const z=i+1;
+  return {z,sy,nm,ms:+ms,en:en==='-'?null:+en,cat:NOBLE.includes(z)?'noble':NONMETAL.includes(z)?'nonmetal':'metal',ml:METALLOID.includes(z)};});
+const BYSY=Object.fromEntries(EL.map(e=>[e.sy,e]));
+const COV={Li:128,Be:96,B:84,C:76,N:71,O:66,F:57,Na:166,Mg:141,Al:121,Si:111,P:107,S:105,Cl:102,Br:120,I:139,At:150}; // pm, Cordero 2008
+const GROUPS=['','IA','IIA','IIIB','IVB','VB','VIB','VIIB','VIIIB','VIIIB','VIIIB','IB','IIB','IIIA','IVA','VA','VIA','VIIA','VIIIA'];
+const CATVN={metal:'Kim loại',nonmetal:'Phi kim',noble:'Khí hiếm'};
+
+function pos(z){
+  if(z<=2)return{p:1,c:z===1?1:18};
+  if(z<=4)return{p:2,c:z-2};
+  if(z<=10)return{p:2,c:z+8};
+  if(z<=12)return{p:3,c:z-10};
+  if(z<=18)return{p:3,c:z};
+  if(z<=36)return{p:4,c:z-18};
+  if(z<=54)return{p:5,c:z-36};
+  if(z<=56)return{p:6,c:z-54};
+  if(z<=71)return{p:6,f:1,fi:z-57,c:4+z-57};
+  if(z<=86)return{p:6,c:z-68};
+  if(z<=88)return{p:7,c:z-86};
+  if(z<=103)return{p:7,f:1,fi:z-89,c:4+z-89};
+  return{p:7,c:z-100};
+}
+
+/* ---------- Cấu hình electron ---------- */
+const ORDER=['1s','2s','2p','3s','3p','4s','3d','4p','5s','4d','5p','6s','4f','5d','6p','7s','5f','6d','7p'];
+const CAP={s:2,p:6,d:10,f:14};
+const EXC={24:{'3d':5,'4s':1},29:{'3d':10,'4s':1},41:{'4d':4,'5s':1},42:{'4d':5,'5s':1},44:{'4d':7,'5s':1},45:{'4d':8,'5s':1},46:{'4d':10,'5s':0},47:{'4d':10,'5s':1},
+ 57:{'4f':0,'5d':1},58:{'4f':1,'5d':1},64:{'4f':7,'5d':1},78:{'5d':9,'6s':1},79:{'5d':10,'6s':1},
+ 89:{'5f':0,'6d':1},90:{'5f':0,'6d':2},91:{'5f':2,'6d':1},92:{'5f':3,'6d':1},93:{'5f':4,'6d':1},96:{'5f':7,'6d':1},103:{'6d':0,'7p':1}};
+function orbitals(z){
+  let left=z;const o={};
+  for(const k of ORDER){const c=Math.min(CAP[k[1]],left);if(c>0)o[k]=c;left-=c;if(left<=0)break;}
+  if(EXC[z])Object.assign(o,EXC[z]);
+  for(const k in o)if(!o[k])delete o[k];
+  return o;
+}
+const sortKeys=o=>Object.keys(o).sort((a,b)=>(+a[0]-+b[0])||('spdf'.indexOf(a[1])-'spdf'.indexOf(b[1])));
+const cfgStr=o=>sortKeys(o).map(k=>k+sup(o[k])).join('');
+function configs(z){
+  const o=orbitals(z);const full=cfgStr(o);
+  let short='';
+  const core=[...NOBLE].reverse().find(n=>n<z);
+  if(core){const co=orbitals(core);const r={};for(const k in o){const v=o[k]-(co[k]||0);if(v>0)r[k]=v;}
+    const sym=EL[core-1].sy;short='['+sym+']'+cfgStr(r);}
+  const shells=[];for(const k in o){const n=+k[0];shells[n-1]=(shells[n-1]||0)+o[k];}
+  for(let i=0;i<shells.length;i++)shells[i]=shells[i]||0;
+  return{full,short,shells};
+}
+
+/* ---------- Bảng tuần hoàn ---------- */
+function heatColor(en){
+  const t=Math.max(0,Math.min(1,(en-0.7)/(3.98-0.7)));
+  const a=[253,236,241],b=[150,20,60];
+  const c=a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+  return{bg:`rgb(${c})`,dark:t>0.5};
+}
+const tables=[];
+function buildTable(host,mode){
+  const g=(r,c)=>`grid-row:${r};grid-column:${c}`;
+  let h='';
+  // nhãn nhóm
+  const lbl=[[1,'IA'],[2,'IIA'],[3,'IIIB'],[4,'IVB'],[5,'VB'],[6,'VIB'],[7,'VIIB'],[8,'VIIIB'],[11,'IB'],[12,'IIB'],[13,'IIIA'],[14,'IVA'],[15,'VA'],[16,'VIA'],[17,'VIIA'],[18,'VIIIA']];
+  for(const [c,t] of lbl){const span=c===8?'9 / 12':`${c+1}`;h+=`<div class="gl" data-gc="${c}${c===8?',9,10':''}" style="grid-row:1;grid-column:${span}">${t}</div>`;}
+  for(let p=1;p<=7;p++)h+=`<div class="pl" data-p="${p}" style="${g(p+1,1)}">${p}</div>`;
+  h+=`<div class="ph" style="${g(7,4)}">57–71</div><div class="ph" style="${g(8,4)}">89–103</div>`;
+  h+=`<div class="fl" style="grid-row:10;grid-column:2 / 5">Lanthanide<br>(57–71)</div><div class="fl" style="grid-row:11;grid-column:2 / 5">Actinide<br>(89–103)</div>`;
+  for(const e of EL){
+    const q=pos(e.z);
+    const row=q.f?(q.p===6?10:11):q.p+1;
+    h+=`<button type="button" class="cell ${e.cat}${e.ml?' mloid':''}" data-z="${e.z}" data-p="${q.p}" data-c="${q.f?3:q.c}" title="${e.nm}" style="${g(row,q.c+1)}"><span class="z">${e.z}</span><span class="sy">${e.sy}</span><span class="nmx">${e.nm}</span><span class="ms">${vn(e.ms)}</span></button>`;
+  }
+  host.innerHTML=`
+    <div class="pt-tools"><div class="seg" role="group" aria-label="Chế độ hiển thị"><button type="button" data-mode="cat" aria-pressed="true">Phân loại</button><button type="button" data-mode="heat" aria-pressed="false">Tính phi kim (độ âm điện)</button></div></div>
+    <div class="legend"></div>
+    <div class="pt-scroll"><div class="pt-outer">
+      <div class="va" hidden><div class="line"></div><span>Trong nhóm A: tính phi kim tăng dần từ dưới lên</span></div>
+      <div class="pt-main"><div class="ha" hidden><span>Trong một chu kì: tính phi kim tăng dần từ trái sang phải</span><div class="line"></div></div><div class="pt">${h}</div></div>
+    </div></div>`;
+  const t={host,mode};tables.push(t);
+  host.addEventListener('click',ev=>{
+    const b=ev.target.closest('.cell');if(b){openEl(+b.dataset.z);return;}
+    const m=ev.target.closest('[data-mode]');if(m)setMode(t,m.dataset.mode);
+  });
+  setMode(t,mode);
+}
+function setMode(t,mode){
+  t.mode=mode;
+  $$('[data-mode]',t.host).forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));
+  $('.legend',t.host).innerHTML=mode==='cat'
+   ?`<span class="sw"><i class="m"></i>Kim loại</span><span class="sw"><i class="n"></i>Phi kim</span><span class="sw"><i class="g"></i>Khí hiếm</span><span class="sw"><i class="l"></i>Á kim (viền nét đứt)</span>`
+   :`<span class="sw">Độ âm điện thấp (0,7)</span><span class="grad" aria-hidden="true"></span><span class="sw">cao (3,98)</span><span class="sw"><i style="background:repeating-linear-gradient(45deg,#e8eef0,#e8eef0 3px,#cfd9dd 3px,#cfd9dd 6px)"></i>Chưa có số liệu</span>`;
+  $('.va',t.host).hidden=$('.ha',t.host).hidden=mode!=='heat';
+  $$('.cell',t.host).forEach(c=>{
+    const e=EL[+c.dataset.z-1];c.style.background='';c.classList.remove('nodata','dark');
+    if(mode==='heat'){
+      if(e.en==null)c.classList.add('nodata');
+      else{const h=heatColor(e.en);c.style.background=h.bg;if(h.dark)c.classList.add('dark');}
+    }
+  });
+}
+function markSelected(z){
+  const q=pos(z);
+  tables.forEach(t=>{
+    $$('.cell.sel',t.host).forEach(c=>c.classList.remove('sel'));
+    $$('.gl.on,.pl.on',t.host).forEach(c=>c.classList.remove('on'));
+    const c=$(`.cell[data-z="${z}"]`,t.host);if(c)c.classList.add('sel');
+    const cols=q.f?[3]:[q.c];
+    $$('.gl',t.host).forEach(g=>{if(g.dataset.gc.split(',').map(Number).some(x=>cols.includes(x)))g.classList.add('on');});
+    const pl=$(`.pl[data-p="${q.p}"]`,t.host);if(pl)pl.classList.add('on');
+  });
+}
+
+/* ---------- Hộp thoại nguyên tố + mô hình nguyên tử ---------- */
+const dlg=$('#dlg');let curZ=1,ionOn=false,raf=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function ionInfo(e,cfg){
+  const outer=cfg.shells[cfg.shells.length-1],q=pos(e.z);
+  if(e.cat==='nonmetal'&&((outer>=4&&outer<=7)||e.z===1)){const g=e.z===1?1:8-outer;return{type:'gain',n:g,label:g===1?'1 electron':g+' electron'};}
+  if(e.cat==='metal'&&!q.f&&[1,2,13].includes(q.c)&&q.p>=2){return{type:'loss',n:outer};}
+  return null;
+}
+function openEl(z,ion){
+  curZ=z;ionOn=!!ion;
+  if(!dlg.open)dlg.showModal();
+  renderEl();markSelected(z);
+}
+function renderEl(){
+  const e=EL[curZ-1],q=pos(curZ),cfg=configs(curZ),outer=cfg.shells[cfg.shells.length-1];
+  const grp=q.f?'IIIB':GROUPS[q.c];const isA=!q.f&&(q.c<=2||q.c>=13);
+  const info=ionInfo(e,cfg);
+  let insight='';
+  if(e.cat==='noble')insight=`Khí hiếm: lớp electron ngoài cùng đã bền vững (${curZ===2?'2':'8'} electron) nên rất ít tham gia phản ứng hóa học.`;
+  else if(e.cat==='nonmetal'&&info)insight=`${e.sy} có ${outer} electron lớp ngoài cùng nên có xu hướng <b>nhận ${info.label}</b> để đạt cấu hình bền vững của khí hiếm. Đây là biểu hiện của <b>tính phi kim</b>.`;
+  else if(e.cat==='nonmetal')insight=`${e.sy} là phi kim: có xu hướng nhận electron khi tham gia phản ứng.`;
+  else if(info&&info.type==='loss')insight=`${e.sy} có ${outer} electron lớp ngoài cùng nên có xu hướng <b>nhường ${outer} electron</b> tạo cation (tính kim loại).`;
+  else insight=`${e.sy} là kim loại: lớp electron ngoài cùng có ít electron, có xu hướng nhường electron khi tham gia phản ứng.`;
+  if(e.ml)insight+=` <b>${e.sy} là á kim</b>: có tính chất trung gian giữa kim loại và phi kim.`;
+  const ionBtn=info?`<button class="btn ${info.type==='gain'?'pink':'alt'}" id="ionBtn" type="button" aria-pressed="${ionOn}">${info.type==='gain'?'Cho nguyên tử nhận electron':'Cho nguyên tử nhường electron'}</button>`:'';
+  $('#dlgTitle').textContent=`${e.nm} (${e.sy}) — ô số ${e.z}`;
+  $('#dlgBody').innerHTML=`
+   <div>
+     <div class="model"><svg id="atomSvg" viewBox="0 0 360 360" role="img" aria-label="Mô hình nguyên tử ${e.nm}"></svg></div>
+     <div class="shells" id="shellList"></div>
+     <div class="ionrow">${ionBtn}<span class="ioneq" id="ionEq" aria-live="polite"></span></div>
+   </div>
+   <div>
+     <div class="bigtile"><div class="t ${e.cat}"><small>${e.z}</small><b>${e.sy}</b><span style="font-size:.7rem">${vn(e.ms)}</span></div>
+       <div><h3 style="margin:0">${e.nm}</h3><span class="tag ${e.cat}">${CATVN[e.cat]}</span>${e.ml?'<span class="tag ml">Á kim</span>':''}</div></div>
+     <dl class="kv">
+       <dt>Số thứ tự ô</dt><dd>${e.z}</dd>
+       <dt>Chu kì</dt><dd>${q.p}</dd>
+       <dt>Nhóm</dt><dd>${grp} (nhóm ${isA?'A':'B'})${q.f?' — họ '+(q.p===6?'lanthanide':'actinide')+', xếp riêng thành hàng dưới bảng':''}</dd>
+       <dt>Cấu hình electron</dt><dd>${cfg.full}</dd>
+       ${cfg.short?`<dt>Rút gọn</dt><dd>${cfg.short}</dd>`:''}
+       <dt>Số electron mỗi lớp</dt><dd>${cfg.shells.join(', ')}</dd>
+       <dt>Electron lớp ngoài cùng</dt><dd>${outer}</dd>
+       <dt>Khối lượng nguyên tử</dt><dd>${vn(e.ms)} (amu, làm tròn theo SGK)</dd>
+       <dt>Độ âm điện</dt><dd>${e.en==null?'Chưa xác định':vn(e.en.toFixed(2))+' (thang Pauling, không có đơn vị)'}</dd>
+     </dl>
+     <div class="insight">${insight}</div>
+   </div>`;
+  if($('#ionBtn'))$('#ionBtn').onclick=()=>{ionOn=!ionOn;drawAtom();};
+  drawAtom();
+}
+function drawAtom(){
+  cancelAnimationFrame(raf);
+  const e=EL[curZ-1],cfg=configs(curZ),info=ionInfo(e,cfg);
+  let shells=[...cfg.shells],gained=0;
+  const active=ionOn&&info;
+  if(active){if(info.type==='gain'){shells[shells.length-1]+=info.n;gained=info.n;}else shells.pop();}
+  const svg=$('#atomSvg');const cx=180,cy=180;
+  let s='';
+  const nucR=shells.length?16:16;
+  shells.forEach((n,i)=>{s+=`<circle cx="${cx}" cy="${cy}" r="${34+i*20}" fill="none" stroke="#9fb3bd" stroke-width="1" stroke-dasharray="3 3"/>`;});
+  s+=`<circle cx="${cx}" cy="${cy}" r="${nucR}" fill="#0f2742"/><text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">${e.z}+</text>`;
+  const els=[];
+  const last=shells.length-1;
+  shells.forEach((n,i)=>{for(let k=0;k<n;k++){
+    const isNew=active&&info.type==='gain'&&i===last&&k>=n-gained;
+    const col=isNew?'#e8a400':(i===last?'#a81f4b':'#0f2742');
+    s+=`<circle class="el" r="${isNew?5.5:4.5}" fill="${col}" ${isNew?'stroke="#0f2742" stroke-width="1.5"':''}/>`;
+    els.push({i,k,n});
+  }});
+  svg.innerHTML=s;
+  const nodes=$$('.el',svg);
+  const place=t=>{els.forEach((o,idx)=>{const r=34+o.i*20;const a=(o.k/o.n)*Math.PI*2+t*0.0005/Math.pow(o.i+1,.6)+o.i*0.5;
+    nodes[idx].setAttribute('cx',(cx+r*Math.cos(a)).toFixed(1));nodes[idx].setAttribute('cy',(cy+r*Math.sin(a)).toFixed(1));});};
+  place(0);
+  if(!reduce){const loop=t=>{place(t);raf=requestAnimationFrame(loop);};raf=requestAnimationFrame(loop);}
+  const names='KLMNOPQ';
+  $('#shellList').innerHTML=shells.map((n,i)=>`<span>Lớp ${names[i]}: ${n}e</span>`).join('');
+  const eq=$('#ionEq');
+  if(info&&eq){
+    const ch=info.n===1?'':info.n;
+    if(!active)eq.textContent='';
+    else eq.textContent=info.type==='gain'?`${e.sy} + ${info.n===1?'':info.n}e⁻ → ${e.sy}${sup(ch+'-')}`:`${e.sy} → ${e.sy}${sup(ch+'+')} + ${info.n===1?'':info.n}e⁻`;
+  }
+  const btn=$('#ionBtn');if(btn)btn.setAttribute('aria-pressed',!!active);
+}
+dlg.addEventListener('close',()=>{cancelAnimationFrame(raf);tables.forEach(t=>{$$('.cell.sel',t.host).forEach(c=>c.classList.remove('sel'));$$('.gl.on,.pl.on',t.host).forEach(c=>c.classList.remove('on'));});});
+$('#closeDlg').onclick=()=>dlg.close();
+$('#prevEl').onclick=()=>openEl(curZ===1?118:curZ-1);
+$('#nextEl').onclick=()=>openEl(curZ===118?1:curZ+1);
+dlg.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')$('#prevEl').click();if(e.key==='ArrowRight')$('#nextEl').click();});
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)openEl(+b.dataset.open,b.dataset.ion==='1');});
+
+/* ---------- Biểu đồ số liệu ---------- */
+const SETS={ck2:['Li','Be','B','C','N','O','F'],ck3:['Na','Mg','Al','Si','P','S','Cl'],vii:['F','Cl','Br','I','At']};
+function renderChart(){
+  const set=$('#chSet').value,metric=$('#chMetric').value,syms=SETS[set];
+  const vals=syms.map(s=>metric==='en'?BYSY[s].en:COV[s]);
+  const unit=metric==='en'?'Độ âm điện (thang Pauling, không có đơn vị)':'Bán kính cộng hóa trị (pm)';
+  const W=600,H=300,L=46,B=40,T=34,n=syms.length,max=Math.max(...vals)*1.15;
+  const bw=(W-L-14)/n;let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${unit}" style="width:100%;height:auto"><text x="${L}" y="18" font-size="12" font-weight="600" fill="#0f2742">${unit}</text>`;
+  for(let i=0;i<=4;i++){const y=H-B-(H-B-T)*i/4;const v=max*i/4;s+=`<line x1="${L}" x2="${W-6}" y1="${y}" y2="${y}" stroke="#d3dfe4"/><text x="${L-6}" y="${y+4}" font-size="10" text-anchor="end" fill="#46596e">${metric==='en'?vn(v.toFixed(1)):Math.round(v)}</text>`;}
+  syms.forEach((sy,i)=>{const v=vals[i],h=(H-B-T)*v/max,x=L+i*bw+bw*.18,w=bw*.64,e=BYSY[sy];
+    const col=e.cat==='nonmetal'?'#e58aa3':'#5fbdb2';
+    s+=`<rect x="${x}" y="${H-B-h}" width="${w}" height="${h}" rx="3" fill="${col}"/><text x="${x+w/2}" y="${H-B-h-5}" font-size="11" font-weight="700" text-anchor="middle" fill="#0f2742">${metric==='en'?vn(v.toFixed(2)):v}</text><text x="${x+w/2}" y="${H-B+16}" font-size="13" font-weight="800" text-anchor="middle" fill="#0f2742">${sy}</text><text x="${x+w/2}" y="${H-B+30}" font-size="9" text-anchor="middle" fill="#46596e">Z=${e.z}</text>`;});
+  s+='</svg>';
+  $('#chart').innerHTML=s;
+  $('#chTable').innerHTML=`<thead><tr><th>Nguyên tố</th><th>Z</th><th>Độ âm điện (không đơn vị)</th><th>Bán kính cộng hóa trị (pm)</th></tr></thead><tbody>`+syms.map(sy=>{const e=BYSY[sy];return `<tr><td>${e.nm} (${sy})</td><td>${e.z}</td><td>${vn(e.en.toFixed(2))}</td><td>${COV[sy]}</td></tr>`}).join('')+'</tbody>';
+  const trend=set==='vii'?'Đi từ F xuống At trong nhóm VIIA: bán kính tăng, độ âm điện giảm, tính phi kim giảm.':'Đi từ trái sang phải trong chu kì: bán kính giảm, độ âm điện tăng, tính phi kim tăng.';
+  $('#chNote').innerHTML=`<b>Nhận xét:</b> ${trend}<br>Nguồn: độ âm điện theo thang Pauling (WebElements/Wikipedia); bán kính cộng hóa trị theo Cordero và cs., <i>Dalton Trans.</i> 2008, 2832–2838 (1 pm = 10⁻¹² m).`;
+}
+$('#chSet').onchange=$('#chMetric').onchange=renderChart;
+
+/* ---------- Điều hướng ---------- */
+function showView(v){
+  $$('.view').forEach(x=>x.classList.toggle('on',x.id==='view-'+v));
+  $$('.nav button').forEach(b=>{if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  scrollTo(0,0);try{history.replaceState(null,'','#'+v)}catch(e){}
+}
+function showSub(s){
+  $$('.subtabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.sub===s));
+  $$('.sub').forEach(x=>x.classList.toggle('on',x.id==='sub-'+s));
+}
+$$('.nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$$('.subtabs button').forEach(b=>b.onclick=()=>showSub(b.dataset.sub));
+
+/* ---------- Đăng nhập ---------- */
+let user=store.get('hh10_user');
+function mountLogin(host){
+  host.innerHTML=`<h2>Đăng nhập học sinh</h2><p class="note">Điền đủ thông tin để bắt đầu làm bài.</p>
+   <div class="field"><label for="${host.id}n">Họ và tên</label><input id="${host.id}n" autocomplete="off" maxlength="60"></div>
+   <div class="row2"><div class="field"><label for="${host.id}l">Lớp</label><input id="${host.id}l" autocomplete="off" maxlength="12" placeholder="10A3"></div>
+   <div class="field"><label for="${host.id}s">Số thứ tự</label><input id="${host.id}s" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="12"></div></div>
+   <p class="err" role="alert"></p><button class="btn" type="button">Đăng nhập</button>`;
+  $('button',host).onclick=()=>{
+    const name=$('#'+host.id+'n').value.trim().replace(/\s+/g,' '),lop=$('#'+host.id+'l').value.trim().toUpperCase(),stt=$('#'+host.id+'s').value.trim();
+    const err=$('.err',host);
+    if(name.length<2){err.textContent='Hãy nhập họ và tên.';return;}
+    if(!lop){err.textContent='Hãy nhập lớp.';return;}
+    if(!/^\d{1,3}$/.test(stt)||+stt<1){err.textContent='Số thứ tự phải là số từ 1 trở lên.';return;}
+    user={name,lop,stt:+stt};store.set('hh10_user',user);
+    updateUser();showView('nonmetal');showSub('practice');
+  };
+}
+function updateUser(){
+  const chip=$('#userChip');
+  if(user){chip.hidden=false;$('#userChipText').textContent=`${user.name} · ${user.lop} · STT ${user.stt}`;}else chip.hidden=true;
+  const lc=$('#loginCard');
+  if(user)lc.innerHTML=`<h2>Xin chào, ${esc(user.name)}</h2><p>Lớp ${esc(user.lop)} · Số thứ tự ${user.stt}</p><button class="btn pink" type="button" id="goQuiz">Làm bài tập</button> <button class="btn alt" type="button" id="goTable">Xem bảng tuần hoàn</button>`;
+  else mountLogin(lc);
+  if(user){$('#goQuiz').onclick=()=>{showView('nonmetal');showSub('practice');};$('#goTable').onclick=()=>showView('table');}
+  quiz.state=quiz.state==='run'||quiz.state==='done'?quiz.state:'intro';
+  renderQuiz();
+}
+$('#logoutBtn').onclick=()=>{user=null;store.del('hh10_user');quiz.state='intro';updateUser();showView('home');};
+
+/* ---------- Bài tập ---------- */
+const QS=[
+ {lv:'Dễ',q:'Tính phi kim của một nguyên tố đặc trưng cho khả năng nào của nguyên tử?',o:['Nhận electron khi tham gia phản ứng hóa học','Nhường electron khi tham gia phản ứng hóa học','Dẫn điện tốt','Tồn tại ở trạng thái khí'],a:0,e:'Bản chất của tính phi kim là khả năng nhận electron của nguyên tử, không phải các tính chất vật lí như trạng thái, màu sắc hay độ cứng.'},
+ {lv:'Dễ',q:'Trong các phản ứng oxi hóa – khử, phi kim thường đóng vai trò gì?',o:['Chất oxi hóa','Chất khử','Chất xúc tác','Môi trường phản ứng'],a:0,e:'Phi kim có xu hướng nhận electron từ chất khác nên thường là chất oxi hóa.'},
+ {lv:'Dễ',q:'Các nguyên tố phi kim tập trung chủ yếu ở vị trí nào của bảng tuần hoàn?',o:['Phía trên bên phải (không kể khí hiếm)','Phía trên bên trái','Phía dưới bên trái','Giữa bảng, ở các nhóm B'],a:0,e:'Phi kim thường ở phía trên bên phải, nơi bán kính nguyên tử nhỏ và lực hút hạt nhân lớn.'},
+ {lv:'Dễ',q:'Nguyên tử chlorine có cấu hình electron 1s²2s²2p⁶3s²3p⁵. Khi tham gia phản ứng, chlorine có xu hướng nào?',o:['Nhận 1 electron tạo ion Cl⁻','Nhường 1 electron tạo ion Cl⁺','Nhường 7 electron tạo ion Cl⁷⁺','Nhận 7 electron tạo ion Cl⁷⁻'],a:0,e:'Cl có 7 electron lớp ngoài cùng, chỉ cần nhận thêm 1 electron là đạt cấu hình bền của khí hiếm: Cl + e⁻ → Cl⁻.'},
+ {lv:'Dễ',q:'Trong một chu kì, theo chiều từ trái sang phải, tính phi kim biến đổi như thế nào?',o:['Tăng dần','Giảm dần','Không đổi','Tăng rồi giảm'],a:0,e:'Số proton tăng, số lớp electron không đổi nên điện tích hạt nhân hiệu dụng tăng, lực hút electron mạnh hơn.'},
+ {lv:'Dễ',q:'Trong một nhóm A, theo chiều từ trên xuống dưới, độ âm điện biến đổi như thế nào?',o:['Giảm dần','Tăng dần','Không đổi','Tăng rồi giảm'],a:0,e:'Số lớp electron tăng làm bán kính tăng, lực hút lên electron yếu đi nên độ âm điện giảm, tính phi kim giảm.'},
+ {lv:'Trung bình',q:'Vì sao fluorine (F) có tính phi kim mạnh nhất trong các nguyên tố?',o:['Bán kính nguyên tử rất nhỏ và độ âm điện lớn nhất','Có nhiều electron lớp ngoài cùng nhất','Có số hiệu nguyên tử lớn nhất trong nhóm VIIA','Là chất khí ở điều kiện thường'],a:0,e:'F ở góc trên bên phải (không kể khí hiếm), bán kính rất nhỏ và độ âm điện lớn nhất (3,98) nên hút electron rất mạnh. Trạng thái khí không quyết định tính phi kim.'},
+ {lv:'Trung bình',q:'Cho P (Z = 15), S (Z = 16), Cl (Z = 17). Sắp xếp theo chiều tăng dần tính phi kim:',o:['P < S < Cl','Cl < S < P','S < P < Cl','P < Cl < S'],a:0,e:'Ba nguyên tố cùng chu kì 3, tính phi kim tăng từ trái sang phải. Độ âm điện: P 2,19 < S 2,58 < Cl 3,16.'},
+ {lv:'Trung bình',q:'Dãy nào sắp xếp đúng theo chiều giảm dần tính phi kim của các nguyên tố nhóm VIIA?',o:['F > Cl > Br > I','I > Br > Cl > F','F > Br > Cl > I','Cl > F > Br > I'],a:0,e:'Trong một nhóm A, tính phi kim giảm từ trên xuống dưới. Độ âm điện: F 3,98 > Cl 3,16 > Br 2,96 > I 2,66.'},
+ {lv:'Trung bình',q:'Cho độ âm điện (thang Pauling): N 3,04; O 3,44; S 2,58; Cl 3,16. Nguyên tử nào hút electron liên kết mạnh nhất?',o:['O','Cl','N','S'],a:0,e:'Độ âm điện càng lớn thì hút electron liên kết càng mạnh. O có độ âm điện lớn nhất (3,44).'},
+ {lv:'Trung bình',q:'Nguyên tử nguyên tố X có cấu hình electron 1s²2s²2p⁴. Phát biểu nào đúng?',o:['X ở chu kì 2, nhóm VIA, có xu hướng nhận 2 electron tạo ion X²⁻','X ở chu kì 2, nhóm IVA, có xu hướng nhận 4 electron','X ở chu kì 4, nhóm VIA, có xu hướng nhường 6 electron','X ở chu kì 2, nhóm VIA, có xu hướng nhường 6 electron tạo ion X⁶⁺'],a:0,e:'X có 2 lớp electron nên ở chu kì 2; lớp ngoài có 6 electron (electron cuối vào phân lớp p) nên ở nhóm VIA. X (oxygen) dễ nhận 2 electron để đủ 8.'},
+ {lv:'Trung bình',q:'Trong phản ứng H₂ + Cl₂ → 2HCl, cặp electron dùng chung lệch về phía nguyên tử nào, vì sao?',o:['Cl, vì độ âm điện của Cl (3,16) lớn hơn H (2,20)','H, vì H có độ âm điện lớn hơn','Không lệch, vì cả hai đều là phi kim','Cl, vì bán kính nguyên tử Cl nhỏ hơn H'],a:0,e:'Cl có độ âm điện lớn hơn nên hút cặp electron chung mạnh hơn, liên kết H–Cl phân cực về phía Cl. Bán kính Cl lớn hơn H nên phương án cuối sai.'},
+ {lv:'Khó',q:'X và Y thuộc cùng một chu kì, ở hai ô liên tiếp nhau (Z_X < Z_Y), tổng số proton của hai nguyên tử là 31. Phát biểu nào đúng?',o:['Tính phi kim của Y mạnh hơn X; Y có xu hướng nhận 2 electron','Tính phi kim của X mạnh hơn Y; X có xu hướng nhận 3 electron','Tính phi kim của Y mạnh hơn X; Y có xu hướng nhận 1 electron','X và Y thuộc cùng một nhóm A'],a:0,e:'Z_X + Z_Y = 31 và Z_Y = Z_X + 1 nên Z_X = 15 (P), Z_Y = 16 (S), cùng chu kì 3. S có 6 electron lớp ngoài nên nhận 2 electron. Trong chu kì, tính phi kim tăng từ trái sang phải nên S > P (2,58 > 2,19).'},
+ {lv:'Khó',q:'Sắp xếp theo chiều giảm dần tính phi kim của N, O, P, S (độ âm điện: N 3,04; O 3,44; P 2,19; S 2,58):',o:['O > N > S > P','N > O > S > P','O > S > N > P','O > N > P > S'],a:0,e:'Chu kì 2: O > N (3,44 > 3,04). Chu kì 3: S > P (2,58 > 2,19). Các nguyên tố chu kì 2 có bán kính nhỏ hơn nên mạnh hơn nguyên tố cùng nhóm ở chu kì 3: N > P, O > S; so độ âm điện N (3,04) > S (2,58). Vậy O > N > S > P.'}
+];
+const quiz={state:'intro',i:0,ans:[],order:[],t0:0,result:null};
+const host=$('#quizHost');
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function renderQuiz(){
+  if(!user){host.innerHTML='<div class="qwrap"><h3>Cần đăng nhập để làm bài</h3><p>Nhập họ tên, lớp và số thứ tự để bắt đầu.</p><div id="quizLogin"></div></div>';mountLogin($('#quizLogin'));return;}
+  if(quiz.state==='intro'){
+    const prev=(store.get('hh10_results')||[]).filter(r=>r.hoTen===user.name&&r.lop===user.lop&&r.stt===user.stt).length;
+    host.innerHTML=`<div class="qwrap"><h3>Sẵn sàng, ${esc(user.name)}?</h3><p>${QS.length} câu trắc nghiệm: 6 câu dễ, 6 câu trung bình, 2 câu khó. Mỗi câu chọn một đáp án, web báo đúng/sai ngay.${prev?` Bạn đã làm ${prev} lần trước.`:''}</p><button class="btn pink" id="startQ" type="button">Bắt đầu làm bài</button></div>`;
+    $('#startQ').onclick=()=>{quiz.state='run';quiz.i=0;quiz.ans=[];quiz.order=QS.map(q=>shuffle(q.o.map((_,k)=>k)));quiz.t0=Date.now();renderQuiz();};
+  }else if(quiz.state==='run'){
+    const q=QS[quiz.i],ord=quiz.order[quiz.i],done=quiz.ans[quiz.i]!==undefined;
+    const lc=q.lv==='Dễ'?'':q.lv==='Khó'?' kh':' tb';
+    host.innerHTML=`<div class="qwrap"><div><b>Câu ${quiz.i+1}/${QS.length}</b><span class="lvl${lc}">${q.lv}</span></div><div class="prog"><i style="width:${(quiz.i+(done?1:0))/QS.length*100}%"></i></div>
+     <p class="qtext">${esc(q.q)}</p><div class="opts">${ord.map((k,j)=>`<button type="button" class="opt" data-k="${k}"><span class="k">${'ABCD'[j]}</span><span>${esc(q.o[k])}</span></button>`).join('')}</div><div id="fb"></div></div>`;
+    const apply=()=>{
+      const picked=quiz.ans[quiz.i];
+      $$('.opt',host).forEach(b=>{const k=+b.dataset.k;b.disabled=true;if(k===q.a)b.classList.add('right');else if(k===picked)b.classList.add('wrong');});
+      const ok=picked===q.a;
+      $('#fb').innerHTML=`<div class="fb ${ok?'ok':'no'}" role="status"><b>${ok?'Đúng.':'Chưa đúng.'}</b> ${esc(q.e)}</div><p style="margin-top:14px"><button class="btn" id="nextQ" type="button">${quiz.i===QS.length-1?'Xem kết quả':'Câu tiếp theo'}</button></p>`;
+      $('#nextQ').onclick=()=>{if(quiz.i===QS.length-1)finish();else{quiz.i++;renderQuiz();}};
+      $('#nextQ').focus();
+    };
+    if(done)apply();
+    $$('.opt',host).forEach(b=>b.onclick=()=>{quiz.ans[quiz.i]=+b.dataset.k;renderQuiz();});
+  }else if(quiz.state==='done'){renderResult();}
+}
+function hash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))>>>0;return h.toString(36).toUpperCase().padStart(7,'0').slice(-7);}
+function finish(){
+  const correct=QS.filter((q,i)=>quiz.ans[i]===q.a).length;
+  const results=store.get('hh10_results')||[];
+  const lan=results.filter(r=>r.hoTen===user.name&&r.lop===user.lop&&r.stt===user.stt).length+1;
+  const now=new Date();
+  const diem=Math.round(correct/QS.length*100)/10;
+  const res={thoiGian:now.toLocaleString('vi-VN'),hoTen:user.name,lop:user.lop,stt:user.stt,nhom:TEAM.nhom,noiDung:TEAM.noiDung,soCauDung:correct,tongCau:QS.length,diem10:diem,giayLamBai:Math.round((Date.now()-quiz.t0)/1000),lanLam:lan,
+    chiTiet:QS.map((q,i)=>`C${i+1}:${quiz.ans[i]===q.a?'đúng':'sai'}`).join(' ')};
+  res.ma='HH10-N'+TEAM.nhom+'-'+hash([res.hoTen,res.lop,res.stt,res.soCauDung,res.thoiGian].join('|'));
+  results.push(res);store.set('hh10_results',results);
+  quiz.result=res;quiz.state='done';quiz.sent='sending';renderQuiz();
+  sendResult(res).then(r=>{quiz.sent=r;const el=$('#sendStat');if(el)el.textContent=sendText(r);});
+}
+async function sendResult(res){
+  if(!SHEET_URL)return'noconfig';
+  try{await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(res)});return'ok';}
+  catch(e){const p=store.get('hh10_pending')||[];p.push(res);store.set('hh10_pending',p);return'fail';}
+}
+function sendText(r){return r==='ok'?'Đã gửi kết quả về Google Sheet của lớp.':r==='sending'?'Đang gửi kết quả…':r==='noconfig'?'Chưa kết nối Google Sheet. Kết quả đã lưu trên máy này; bấm "Tải kết quả (CSV)" để nộp thay thế.':'Chưa gửi được (mất mạng?). Kết quả đã lưu, web sẽ gửi lại lần mở sau.';}
+function grade(p){return p>=90?'Xuất sắc':p>=75?'Giỏi':p>=50?'Khá':'Hoàn thành';}
+function renderResult(){
+  const r=quiz.result,pct=Math.round(r.soCauDung/r.tongCau*100);
+  host.innerHTML=`<div class="qwrap"><h3>Kết quả của ${esc(r.hoTen)}</h3>
+   <div class="score">${r.soCauDung}/${r.tongCau}</div><p>${vn(r.diem10)} điểm (thang 10) · Xếp loại: <b>${grade(pct)}</b> · Thời gian: ${Math.floor(r.giayLamBai/60)} phút ${r.giayLamBai%60} giây</p>
+   <div class="sendstat" id="sendStat" role="status">${sendText(quiz.sent)}</div>
+   <h3 style="margin-top:14px">Giấy chứng nhận</h3><div class="cert"><canvas id="certCanvas" width="1600" height="1131" aria-label="Giấy chứng nhận"></canvas></div>
+   <p><button class="btn pink" id="dlCert" type="button">Tải giấy chứng nhận (PNG)</button> <button class="btn alt" id="prCert" type="button">In</button> <button class="btn alt" id="dlCsv" type="button">Tải kết quả (CSV)</button> <button class="btn alt" id="again" type="button">Làm lại</button></p>
+   <div class="review"><h3>Xem lại từng câu</h3>${QS.map((q,i)=>{const ok=quiz.ans[i]===q.a;return `<details><summary>${ok?'✔':'✘'} Câu ${i+1} (${q.lv}): ${esc(q.q)}</summary><p><b>Đáp án đúng:</b> ${esc(q.o[q.a])}</p>${ok?'':`<p><b>Bạn chọn:</b> ${esc(q.o[quiz.ans[i]])}</p>`}<p>${esc(q.e)}</p></details>`}).join('')}</div></div>`;
+  drawCert($('#certCanvas'),r);
+  $('#dlCert').onclick=()=>$('#certCanvas').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`giay-chung-nhan-${r.ma}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
+  $('#prCert').onclick=()=>print();
+  $('#dlCsv').onclick=downloadCsv;
+  $('#again').onclick=()=>{quiz.state='intro';renderQuiz();};
+}
+function downloadCsv(){
+  const rows=store.get('hh10_results')||[];
+  const cols=['thoiGian','hoTen','lop','stt','nhom','noiDung','soCauDung','tongCau','diem10','giayLamBai','lanLam','ma','chiTiet'];
+  const csv='\ufeff'+[cols.join(','),...rows.map(r=>cols.map(c=>'"'+String(r[c]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='ket-qua-nhom'+TEAM.nhom+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+async function drawCert(cv,r){
+  try{await Promise.all([document.fonts.load('800 60px "Be Vietnam Pro"'),document.fonts.load('500 30px "Be Vietnam Pro"')]);}catch(e){}
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,F='"Be Vietnam Pro",system-ui,Arial,sans-serif';
+  c.fillStyle='#fff';c.fillRect(0,0,W,H);
+  c.fillStyle='#fdf3f6';c.fillRect(40,40,W-80,H-80);
+  c.strokeStyle='#0f2742';c.lineWidth=10;c.strokeRect(40,40,W-80,H-80);
+  c.strokeStyle='#a81f4b';c.lineWidth=3;c.strokeRect(66,66,W-132,H-132);
+  c.textAlign='center';c.fillStyle='#0f2742';
+  // ô nguyên tố F
+  c.fillStyle='#f6b5c4';c.fillRect(W/2-55,110,110,110);c.fillStyle='#0f2742';
+  c.font=`600 22px ${F}`;c.textAlign='left';c.fillText('9',W/2-46,136);c.textAlign='center';
+  c.font=`800 64px ${F}`;c.fillText('F',W/2,196);
+  c.font=`800 78px ${F}`;c.fillText('GIẤY CHỨNG NHẬN',W/2,330);
+  c.font=`500 30px ${F}`;c.fillStyle='#46596e';c.fillText('Môn Hóa học 10 · Năm học 2026–2027',W/2,380);
+  c.fillStyle='#0f2742';c.font=`500 34px ${F}`;c.fillText('Chứng nhận học sinh',W/2,470);
+  let fs=96;c.font=`800 ${fs}px ${F}`;while(c.measureText(r.hoTen).width>W-300&&fs>40){fs-=4;c.font=`800 ${fs}px ${F}`;}
+  c.fillStyle='#a81f4b';c.fillText(r.hoTen,W/2,580);
+  c.strokeStyle='#0f2742';c.lineWidth=2;c.beginPath();c.moveTo(W/2-420,610);c.lineTo(W/2+420,610);c.stroke();
+  c.fillStyle='#0f2742';c.font=`600 36px ${F}`;c.fillText(`Lớp ${r.lop} · Số thứ tự ${r.stt}`,W/2,670);
+  c.font=`500 32px ${F}`;
+  c.fillText(`đã hoàn thành bài tập vận dụng “${r.noiDung}” (Nhóm ${r.nhom})`,W/2,740);
+  c.fillText('trên web app Bảng tuần hoàn các nguyên tố hóa học',W/2,786);
+  const pct=Math.round(r.soCauDung/r.tongCau*100);
+  c.font=`800 44px ${F}`;c.fillText(`Kết quả: ${r.soCauDung}/${r.tongCau} câu đúng · ${vn(r.diem10)} điểm · ${grade(pct)}`,W/2,890);
+  c.font=`500 26px ${F}`;c.fillStyle='#46596e';c.textAlign='left';
+  c.fillText(`Ngày cấp: ${r.thoiGian}`,140,1010);c.fillText(`Mã chứng nhận: ${r.ma}`,140,1050);
+  c.textAlign='right';c.fillStyle='#0f2742';c.font=`600 28px ${F}`;c.fillText('GV bộ môn: Phạm Quốc Thắng',W-140,1050);
+}
+
+/* ---------- Khởi tạo ---------- */
+function initTeam(){
+  $('#mLop').textContent=TEAM.lop;$('#mNhom').textContent='Nhóm '+TEAM.nhom;$('#mNd').textContent=TEAM.noiDung;
+  $('#mTv').textContent=TEAM.thanhVien.join(', ');
+  $('#fLop').textContent=TEAM.lop;$('#fNhom').textContent=TEAM.nhom;$('#fTv').textContent=TEAM.thanhVien.join(', ');$('#hdrGroup').textContent=TEAM.nhom;
+}
+initTeam();
+buildTable($('#tableHost1'),'cat');
+buildTable($('#tableHost2'),'heat');
+renderChart();
+updateUser();
+(async()=>{const p=store.get('hh10_pending');if(p&&p.length&&SHEET_URL){store.del('hh10_pending');for(const r of p)await sendResult(r);}})();
+const h0=(location.hash||'').slice(1);if(['home','table','nonmetal'].includes(h0))showView(h0);
+</script>
+</body>
+</html>
